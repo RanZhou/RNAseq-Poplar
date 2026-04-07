@@ -1,0 +1,145 @@
+---
+title: "Tsai Lab RNA-seq Pipeline - Part 2"
+author: "Poplar Genomics Analysis"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+    fig_width: 10
+    fig_height: 8
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.align = 'center'
+)
+
+# Load pipeline
+source("R/config.R")
+source("R/utils.R")
+source("R/fpkm.R")
+source("R/qc.R")
+source("R/de.R")
+source("R/go.R")
+
+# Initialize
+config <- init_pipeline("config/config.yaml")
+```
+
+## Overview
+
+This report documents the RNA-seq analysis pipeline including:
+
+- **FPKM Calculation**: Gene expression quantification
+- **Sample QC**: PCA and clustering for quality assessment  
+- **Differential Expression**: DESeq2 analysis
+- **GO Enrichment**: Functional enrichment testing
+
+---
+
+## 1. Data Loading
+
+```{r load-data}
+# Load all input data
+counts <- load_counts(config)
+design <- load_design(config)
+comparisons <- load_comparisons(config)
+
+# Display summary
+cat("Samples:", nrow(design), "\n")
+cat("Genes:", nrow(counts), "\n")
+cat("Comparisons:", nrow(comparisons), "\n")
+```
+
+### Sample Information
+
+```{r sample-table}
+knitr::kable(design, row.names = FALSE)
+```
+
+### Comparisons
+
+```{r comparison-table}
+knitr::kable(comparisons, row.names = FALSE)
+```
+
+---
+
+## 2. FPKM Calculation
+
+```{r fpkm}
+fpkm_data <- calculate_fpkm(config)
+expressed_genes <- count_expressed_genes(config, fpkm_data)
+```
+
+### Expressed Gene Counts
+
+```{r expressed-table}
+knitr::kable(expressed_genes, row.names = FALSE, 
+             caption = paste0("Genes with FPKM >= ", config$params$fpkm_cutoff))
+```
+
+---
+
+## 3. Sample Quality Control
+
+```{r qc, fig.height=10}
+qc_results <- run_sample_qc(config, fpkm_data)
+```
+
+### PCA Plot
+
+```{r pca-plot}
+if (require("ggplot2")) {
+  p <- plot_pca(qc_results$pca)
+  print(p)
+}
+```
+
+### Sample Clustering
+
+```{r cluster-plot}
+plot(qc_results$clustering, main = "Sample Hierarchical Clustering")
+```
+
+---
+
+## 4. Differential Expression
+
+```{r de}
+de_results <- run_de_analysis(config, counts, fpkm_data)
+```
+
+### DE Summary
+
+```{r de-summary}
+knitr::kable(de_results$summary, row.names = FALSE,
+             caption = "Differentially Expressed Genes")
+```
+
+---
+
+## 5. GO Enrichment
+
+```{r go, eval=config$params$go$enabled}
+go_results <- run_go_enrichment(config)
+```
+
+GO enrichment analysis completed. Results saved to:
+- `data/GO/`: Individual comparison results
+- `GO_enrichment_BP_merge.tab`: Biological Process merged results
+- `GO_enrichment_MF_merge.tab`: Molecular Function merged results  
+- `GO_enrichment_CC_merge.tab`: Cellular Component merged results
+
+---
+
+## Session Info
+
+```{r session}
+sessionInfo()
+```

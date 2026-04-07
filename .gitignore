@@ -1,0 +1,31 @@
+# R
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Data files (large, don't commit)
+data/
+!examples/data/
+*.tab
+*.tsv
+*.csv
+*.gtf
+*.txt
+
+# Output
+output/
+*.html
+*.pdf
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*~
+*.tmp
+*.bak
+
+# Logs
+*.log

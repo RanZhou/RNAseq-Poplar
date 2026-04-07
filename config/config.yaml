@@ -1,0 +1,65 @@
+# RNA-seq Pipeline Configuration
+# Poplar (Populus) RNA-seq Analysis Pipeline
+# Part 2: FPKM, QC, DEG, and GO Enrichment
+
+# Project Information
+project:
+  name: "Poplar_RNASeq_Part2"
+  organism: "Populus deltoides"
+  genome_version: "PdelWV94v2.1"
+  author: "Liangjiao Xue"
+  lab: "Tsai Lab, UGA"
+  email: "liangjiao.xue@gmail.com"
+
+# Input Files (relative to project root)
+input:
+  counts_file: "data/pdel_txi_counts_genelevel_2025.tsv"
+  design_file: "data/pdel_design.txt"
+  compare_file: "data/pdel_compare.txt"
+
+# Database Files
+database:
+  gtf_file: "db/PdelWV94v2.1.gtf"
+  annotation_file: "db/pdel.gene_desc.2026.txt"
+  go_map_file: "db/pdel.uni_jgi.GO.list"
+  go_description_file: "db/gene_ontology_ext_rename.tab"
+
+# Analysis Parameters
+params:
+  # FPKM filtering
+  fpkm_cutoff: 5                    # Minimum FPKM for expressed gene detection
+  
+  # QC parameters
+  pca_min_fpkm: 5                   # Minimum FPKM for PCA (gene filtering)
+  
+  # Differential Expression thresholds
+  de:
+    qvalue_cutoff: 0.05            # Adjusted p-value (FDR) threshold
+    pvalue_cutoff: 1               # Set to 1 to use qvalue; <1 to use raw p-value
+    fold_change_cutoff: 2            # Absolute fold change threshold
+    fpkm_expression_cutoff: 3        # Minimum FPKM for expression filtering
+    log2fc_threshold: 1.25           # Alternative FC threshold for GO list generation
+    
+  # GO Enrichment
+  go:
+    enabled: true
+    node_size: 3
+    ontologies: ["BP", "MF", "CC"]  # Biological Process, Molecular Function, Cellular Component
+    algorithm: "classic"
+    statistic: "fisher"
+
+# Output Settings
+output:
+  fpkm_prefix: "fpkm_"
+  de_prefix: "DE_"
+  expressed_prefix: "expressed_num_"
+  pcc_prefix: "pcc_"
+  go_dir: "data/GO"
+  results_dir: "output"
+  
+# Runtime Settings
+runtime:
+  save_intermediates: true
+  overwrite_existing: false
+  verbose: true
+  n_threads: 4
