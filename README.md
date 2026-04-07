@@ -211,7 +211,7 @@ The refactored pipeline uses `file.path()` which works on all platforms. No manu
 ## Contributing
 
 This is a lab-specific pipeline. For bug reports or feature requests, contact:
-- Liangjiao Xue: liangjiao.xue@gmail.com
+- Ran Zhou: Ran.Zhou@uga.edu
 - Tsai Lab: cjtsai@uga.edu
 
 ## License
