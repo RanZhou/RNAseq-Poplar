@@ -108,8 +108,8 @@ params:
 
 This is a refactored version of the Tsai Lab RNA-seq pipeline:
 - **Original**: https://github.com/TsailabBioinformatics/Transcriptomic_part2_R_2026updated.git
-- **Authors**: Liangjiao Xue, Tsai Lab UGA
-- **Contact**: liangjiao.xue@gmail.com, cjtsai@uga.edu
+- **Authors**: Ran Zhou, Liangjiao Xue, Tsai Lab UGA
+- **Contact**: Ran.Zhou@uga.edu, cjtsai@uga.edu
 
 ---
 
